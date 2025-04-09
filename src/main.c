@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include "opcode.h"
 #include "typedefs.h"
+#include "words.h"
 
 #define ARG_IS(s) (strcmp(arg, s) == 0)
 #define ARG_HAS_PREFIX(p) (strncmp(arg, p, strlen(p)) == 0)
@@ -75,9 +76,10 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "Error: --file is required.\n");
         return 1;
     }
+		rscv_asm_words asmw = asmw_from_asm(opts.filename, opts.filetype, opts.endian);
 
     if (cmds.run_types) {
-        handle_types(opts.filename, opts.filetype, opts.endian);
+        handle_types(asmw);
     }
 
     if (cmds.run_decode) {

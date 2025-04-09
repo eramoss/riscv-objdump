@@ -1,19 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "opcode.h"
-
-u32bit_t read_u32(FILE* fp, int is_little_endian) {
-    u8bit_t b[4];
-    if (fread(b, 1, 4, fp) != 4) return 0;
-
-    if (is_little_endian)
-        return b[0] | (b[1] << 8) | (b[2] << 16) | (b[3] << 24);
-    else
-        return (b[0] << 24) | (b[1] << 16) | (b[2] << 8) | b[3];
-}
-
 
 INSTYPES indentify_op_type(u32bit_t b){
 	int opcode = 0x7F & b;
@@ -37,52 +22,12 @@ INSTYPES indentify_op_type(u32bit_t b){
 		};
 }
 
-void handle_types(const char *filename, const char * filetype, int endian) {
-	FILE * fp;
-	char * line = NULL;
-	size_t len = 0;
-	size_t read;
-
-	fp = fopen(filename, "rb");
-	if (fp == NULL){
-			fprintf(stderr, "Could not read file %s\n", filename);
-			exit(1);
+void handle_types(rscv_asm_words asmw) {
+	int len = asmw.len;
+	for (int i = 0; i < len; i ++ ){
+		INSTYPES type = indentify_op_type(asmw.words[i]);
+		printf("Instruction %d,\t Hex Instruction: 0x%08x,\t%s\n", i+1, asmw.words[i], riscv_instype_str(type));
 	}
-
-
-	u32bit_t instruction_bits = 0;
-	if (strcmp(filetype, "bin") == 0){
-		int counter = 0;
-		while (!feof(fp)) {
-				u32bit_t instruction_bits = read_u32(fp, endian == RSC_OBJ_LITTLE_ENDIAN);
-
-				if (instruction_bits != 0) {
-					INSTYPES type = indentify_op_type(instruction_bits);
-					counter++;
-					printf("Instruction %d,\t Hex Instruction: 0x%08x,\t%s\n", counter, instruction_bits, riscv_instype_str(type));
-				}
-		}
-  } else {
-			int counter = 1;
-			while ((read = getline(&line, &len, fp)) != -1) {
-				if (strcmp(filetype, "hexstr") == 0){
-						instruction_bits = strtoull(line, (char**)0, 16);
-				} else if (strcmp(filetype, "binstr") == 0){
-						instruction_bits = strtoull(line, (char**)0, 2);
-				} else {
-					fprintf(stderr,"Unknown filetype '%s', available: [bin|hexstr|binstr]\n", filetype);
-					exit(1);
-				}
-
-				INSTYPES type = indentify_op_type(instruction_bits);
-				printf("Instruction %d,\t Hex Instruction: 0x%08x,\t%s\n", counter, instruction_bits, riscv_instype_str(type));
-				counter++;
-			}
-	}
-
-	fclose(fp);
-	if (line)
-			free(line);
 }
 
 const char* riscv_instype_str(INSTYPES type) {

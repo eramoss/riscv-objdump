@@ -5,4 +5,5 @@
 
 typedef unsigned long u64bit_t;
 typedef unsigned int u32bit_t;
+typedef u32bit_t word_t;
 typedef unsigned char u8bit_t; 

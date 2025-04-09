@@ -6,6 +6,7 @@
 
 #include "instructions.h"
 #include "typedefs.h"
+#include "words.h"
 
 #define B_TYPE 0b1100011
 #define R_TYPE 0b0110011
@@ -23,5 +24,5 @@
 #define AUIPC 0b0010111
 
 INSTYPES indentify_op_type(u32bit_t b);
-void handle_types(const char * filename, const char* filetype, int endian);
+void handle_types(rscv_asm_words asmw);
 const char* riscv_instype_str(INSTYPES type);
