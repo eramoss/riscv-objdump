@@ -31,7 +31,8 @@ INSTYPES indentify_op_type(u32bit_t b){
 			case S_TYPE:
 				return STORE_TYPE;
 			default:
-				fprintf(stderr, "Could not find type for instruction: %08x\n", b);
+				fprintf(stderr, "Could not find type for instruction: %08x\n, with opcode: %08b", b, opcode);
+				fprintf(stderr, "Possibly passed a format not specified with -filetype or wrong encode\n");
 				exit(1);
 		};
 }
@@ -52,7 +53,6 @@ void handle_types(const char *filename, const char * filetype, int endian) {
 		int counter = 0;
 		while (!feof(fp)) {
 				u32bit_t instruction_bits = read_u32(fp, endian == RSC_OBJ_LITTLE_ENDIAN);
-				fprintf(stderr, "Could not find type for instrasdasduction: %08x\n", instruction_bits);
 
 				if (instruction_bits != 0) {
 					INSTYPES type = indentify_op_type(instruction_bits);
