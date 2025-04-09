@@ -31,7 +31,7 @@ INSTYPES indentify_op_type(u32bit_t b){
 			case S_TYPE:
 				return STORE_TYPE;
 			default:
-				fprintf(stderr, "Could not find type for instruction: %08x\n, with opcode: %08b", b, opcode);
+				fprintf(stderr, "Could not find type for instruction: 0x%08x, with opcode: 0b%08b\n", b, opcode);
 				fprintf(stderr, "Possibly passed a format not specified with -filetype or wrong encode\n");
 				exit(1);
 		};
@@ -44,8 +44,10 @@ void handle_types(const char *filename, const char * filetype, int endian) {
 	size_t read;
 
 	fp = fopen(filename, "rb");
-	if (fp == NULL)
+	if (fp == NULL){
 			fprintf(stderr, "Could not read file %s\n", filename);
+			exit(1);
+	}
 
 
 	u32bit_t instruction_bits = 0;
