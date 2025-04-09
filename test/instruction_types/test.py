@@ -16,22 +16,22 @@ Instruction 7,   Hex Instruction: 0x00000073,   I-type (Immediate)"""
 tests = [
     {
         "description": "ASCII binary file",
-        "cmd": [os.path.join(script_dir, "../../build/riscv-objdump"), "-types", f"--file={os.path.join(script_dir, "inputs/instruction_types_bin.txt")}", "-filetype=binstr"],
+        "cmd": [os.path.join(script_dir, "../../build/riscv-objdump"), "-types", "-file", os.path.join(script_dir, "inputs/instruction_types_bin.txt"), "--type=binstr"],
         "should-fail": False
     },
     {
         "description": "ASCII hex file",
-        "cmd": [os.path.join(script_dir, "../../build/riscv-objdump"), "-types", f"--file={os.path.join(script_dir, "inputs/instruction_types_hex.txt")}", "-filetype=hexstr"],
+        "cmd": [os.path.join(script_dir, "../../build/riscv-objdump"), "-types", "-file", os.path.join(script_dir, "inputs/instruction_types_hex.txt"), "--type=hexstr"],
         "should-fail": False
     },
     {
         "description": "Raw binary file",
-        "cmd": [os.path.join(script_dir, "../../build/riscv-objdump"), "-types", f"--file={os.path.join(script_dir, "inputs/instruction_types_little.bin")}", "-filetype=bin", "--endian=little"],
+        "cmd": [os.path.join(script_dir, "../../build/riscv-objdump"), "-types", "-file", os.path.join(script_dir, "inputs/instruction_types_little.bin"), "--type=bin", "--endian=little"],
         "should-fail": False
     },
     {
         "description": "Raw binary file with wrong endian",
-        "cmd": [os.path.join(script_dir, "../../build/riscv-objdump"), "-types", f"--file={os.path.join(script_dir, "inputs/instruction_types_little.bin")}", "-filetype=bin", "--endian=big"],
+        "cmd": [os.path.join(script_dir, "../../build/riscv-objdump"), "-types", "-file", os.path.join(script_dir, "inputs/instruction_types_little.bin"), "--type=bin", "--endian=big"],
         "should-fail": True
     }
 ]
