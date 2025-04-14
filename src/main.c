@@ -13,12 +13,12 @@ void usage(const char *progname) {
     printf("Usage:\n%s [commands] [options]\n", progname);
     printf("Commands:\n");
     printf("\t-types               See types of each instruction in post compiled riscv asm\n");
-    printf("\t-decode              Decode/Deassemble the binary generated\n");
+    printf("\t-disassemble         Disassemble the binary generated\n");
     printf("\nArgs:\n");
     printf("\t-file <filename>     <REQUIRED> Specify the input file\n"); 
     printf("\nOptions:\n");
-    printf("\t--endian=little|big  (optional, used by -types)\n");
-    printf("\t--type=<type>        (optional, used by -types) [bin | hexstr | binstr] default: hexstr\n");
+    printf("\t--type=<type>        The format of the file passed [bin | hexstr | binstr] default: hexstr\n");
+    printf("\t--endian=little|big  The endianess of the file passed (when `bin` in type) default:little\n");
 }
 
 int parse_endian(const char *value) {
