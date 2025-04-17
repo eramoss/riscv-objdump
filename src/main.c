@@ -12,8 +12,8 @@
 void usage(const char *progname) {
     printf("Usage:\n%s [commands] [options]\n", progname);
     printf("Commands:\n");
-    printf("\t-types               See types of each instruction in post compiled riscv asm\n");
-    printf("\t-disassemble         Disassemble the binary generated\n");
+    printf("\t-types               Types of each instruction in post compiled riscv asm\n");
+    printf("\t-decode         		 Decode each instruction into its fields\n");
     printf("\nArgs:\n");
     printf("\t-file <filename>     <REQUIRED> Specify the input file\n"); 
     printf("\nOptions:\n");
@@ -90,6 +90,7 @@ int main(int argc, char *argv[]) {
     }
 
     if (cmds.run_decode) {
+				handle_decode(asmw);
     }
 
     return 0;
