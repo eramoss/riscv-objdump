@@ -80,57 +80,24 @@ typedef struct {
 } instruction;
 
 
-#define HAS_FIELD(inst, field) _has_field(&(inst), #field)
+#define HAS_FIELD(inst, field) has_field_##field(&(inst))
 
-static inline int _has_field(const instruction *inst, const char *field) {
-    switch (inst->type) {
-        case REG_TYPE:
-            return strcmp(field, "opcode") == 0 ||
-                   strcmp(field, "rd") == 0 ||
-                   strcmp(field, "funct3") == 0 ||
-                   strcmp(field, "rs1") == 0 ||
-                   strcmp(field, "rs2") == 0 ||
-                   strcmp(field, "funct7") == 0;
+static inline int has_field_rd(const instruction *inst) {
+    return inst->type == REG_TYPE ||
+           inst->type == IMM_TYPE ||
+           inst->type == UPP_IMM_TYPE ||
+           inst->type == JUMP_TYPE;
+}
 
-        case IMM_TYPE:
-            return strcmp(field, "opcode") == 0 ||
-                   strcmp(field, "rd") == 0 ||
-                   strcmp(field, "funct3") == 0 ||
-                   strcmp(field, "rs1") == 0 ||
-                   strcmp(field, "imm") == 0;
+static inline int has_field_rs1(const instruction *inst) {
+    return inst->type == REG_TYPE ||
+           inst->type == IMM_TYPE ||
+           inst->type == STORE_TYPE ||
+           inst->type == BRANCH_TYPE;
+}
 
-        case STORE_TYPE:
-            return strcmp(field, "opcode") == 0 ||
-                   strcmp(field, "imm_0_4") == 0 ||
-                   strcmp(field, "funct3") == 0 ||
-                   strcmp(field, "rs1") == 0 ||
-                   strcmp(field, "rs2") == 0 ||
-                   strcmp(field, "imm_5_11") == 0;
-
-        case BRANCH_TYPE:
-            return strcmp(field, "opcode") == 0 ||
-                   strcmp(field, "imm_11") == 0 ||
-                   strcmp(field, "imm_1_4") == 0 ||
-                   strcmp(field, "funct3") == 0 ||
-                   strcmp(field, "rs1") == 0 ||
-                   strcmp(field, "rs2") == 0 ||
-                   strcmp(field, "imm_5_10") == 0 ||
-                   strcmp(field, "imm_12") == 0;
-
-        case UPP_IMM_TYPE:
-            return strcmp(field, "opcode") == 0 ||
-                   strcmp(field, "rd") == 0 ||
-                   strcmp(field, "imm") == 0;
-
-        case JUMP_TYPE:
-            return strcmp(field, "opcode") == 0 ||
-                   strcmp(field, "rd") == 0 ||
-                   strcmp(field, "imm_12_19") == 0 ||
-                   strcmp(field, "imm_11") == 0 ||
-                   strcmp(field, "imm_1_10") == 0 ||
-                   strcmp(field, "imm_20") == 0;
-
-        default:
-            return 0;
-    }
+static inline int has_field_rs2(const instruction *inst) {
+    return inst->type == REG_TYPE ||
+           inst->type == STORE_TYPE ||
+           inst->type == BRANCH_TYPE;
 }

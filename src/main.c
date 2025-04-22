@@ -4,6 +4,7 @@
 #include "opcode.h"
 #include "typedefs.h"
 #include "words.h"
+#include "hazards.h"
 
 #define ARG_IS(s) (strcmp(arg, s) == 0)
 #define ARG_HAS_PREFIX(p) (strncmp(arg, p, strlen(p)) == 0)
@@ -14,6 +15,7 @@ void usage(const char *progname) {
     printf("Commands:\n");
     printf("\t-types               Types of each instruction in post compiled riscv asm\n");
     printf("\t-decode         		 Decode each instruction into its fields\n");
+    printf("\t-hazards         		 Print data hazards\n");
     printf("\nArgs:\n");
     printf("\t-file <filename>     <REQUIRED> Specify the input file\n"); 
     printf("\nOptions:\n");
@@ -40,6 +42,7 @@ typedef struct {
 typedef struct {
     int run_types;
     int run_decode;
+		int run_hazards;
 } CommandFlags;
 
 int main(int argc, char *argv[]) {
@@ -66,6 +69,8 @@ int main(int argc, char *argv[]) {
             cmds.run_types = 1;
         } else if (ARG_IS("-decode")) {
             cmds.run_decode = 1;
+        } else if (ARG_IS("-hazards")) {
+            cmds.run_hazards = 1;
         } else if (ARG_IS("-file")) {
             args.filename = argv[++i];
         } else if (ARG_HAS_PREFIX("--endian=")) {
@@ -91,6 +96,10 @@ int main(int argc, char *argv[]) {
 
     if (cmds.run_decode) {
 				handle_decode(asmw);
+    }
+
+    if (cmds.run_hazards) {
+				handle_hazards(asmw);
     }
 
     return 0;
