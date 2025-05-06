@@ -17,56 +17,62 @@ void handle_hazards(rscv_asm_words asmw){
 }
 
 int identify_hazards(instruction *insts, int len, hazard_t *hazards) {
-    int count_hazards = 0;
+	int count_hazards = 0;
 
-    for (int i = 0; i < len; i++) {
-        bitfield src1 = 0, src2 = 0;
+	for (int i = 0; i < len; i++) {
+		bitfield src1 = 0, src2 = 0;
 
-        switch (insts[i].type) {
-            case REG_TYPE:
-                src1 = insts[i].r.rs1;
-                src2 = insts[i].r.rs2;
-                break;
-            case IMM_TYPE:
-                src1 = insts[i].i.rs1;
-                break;
-            case STORE_TYPE:
-                src1 = insts[i].s.rs1;
-                src2 = insts[i].s.rs2;
-                break;
-            case BRANCH_TYPE:
-                src1 = insts[i].b.rs1;
-                src2 = insts[i].b.rs2;
-                break;
-            default:
-                break;
-        }
+		switch (insts[i].type) {
+			case REG_TYPE:
+				src1 = insts[i].r.rs1;
+				src2 = insts[i].r.rs2;
+				break;
+			case IMM_TYPE:
+				src1 = insts[i].i.rs1;
+				break;
+			case STORE_TYPE:
+				src1 = insts[i].s.rs1;
+				src2 = insts[i].s.rs2;
+				break;
+			case BRANCH_TYPE:
+				src1 = insts[i].b.rs1;
+				src2 = insts[i].b.rs2;
+				break;
+			default:
+				break;
+		}
+		// DATA HAZARD
+		for (int j = i - 1; j >= i - 2 && j >= 0; j--) {
+			bitfield prev_dest = 0;
 
-        for (int j = i - 1; j >= i - 2 && j >= 0; j--) {
-            bitfield prev_dest = 0;
+			switch (insts[j].type) {
+				case REG_TYPE:
+					prev_dest = insts[j].r.rd;
+					break;
+				case IMM_TYPE:
+					prev_dest = insts[j].i.rd;
+					break;
+				case UPP_IMM_TYPE:
+					prev_dest = insts[j].u.rd;
+					break;
+				case JUMP_TYPE:
+					prev_dest = insts[j].j.rd;
+					break;
+				default:
+					break;
+			}
 
-            switch (insts[j].type) {
-                case REG_TYPE:
-                    prev_dest = insts[j].r.rd;
-                    break;
-                case IMM_TYPE:
-                    prev_dest = insts[j].i.rd;
-                    break;
-                case UPP_IMM_TYPE:
-                    prev_dest = insts[j].u.rd;
-                    break;
-                case JUMP_TYPE:
-                    prev_dest = insts[j].j.rd;
-                    break;
-                default:
-                    break;
-            }
+			if ((src1 == prev_dest && src1 != 0) || (src2 == prev_dest && src2 != 0)) {
+				hazards[count_hazards++] = (hazard_t){i, j, DATA};
+			}
+		}
+		// CTRL HAZARD
+		if (insts[i].type == BRANCH_TYPE) {
+			for (int j = i + 1; j < i + 4 && j < len; j++){
+				hazards[count_hazards++] = (hazard_t){i,j, CTRL};
+			}
+		}
+	}
 
-            if ((src1 == prev_dest && src1 != 0) || (src2 == prev_dest && src2 != 0)) {
-                hazards[count_hazards++] = (hazard_t){i, j, DATA};
-            }
-        }
-    }
-
-    return count_hazards;
+	return count_hazards;
 }
