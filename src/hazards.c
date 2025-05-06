@@ -69,7 +69,7 @@ int identify_hazards(instruction *insts, int len, hazard_t *hazards) {
 		// CTRL HAZARD
 		if (insts[i].type == BRANCH_TYPE) {
 			for (int j = i + 1; j < i + 4 && j < len; j++){
-				hazards[count_hazards++] = (hazard_t){i,j, CTRL};
+				hazards[count_hazards++] = (hazard_t){j,i, CTRL};
 			}
 		}
 	}

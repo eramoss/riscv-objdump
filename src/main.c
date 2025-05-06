@@ -5,6 +5,7 @@
 #include "typedefs.h"
 #include "words.h"
 #include "hazards.h"
+#include "nops.h"
 
 #define ARG_IS(s) (strcmp(arg, s) == 0)
 #define ARG_HAS_PREFIX(p) (strncmp(arg, p, strlen(p)) == 0)
@@ -14,13 +15,15 @@ void usage(const char *progname) {
     printf("Usage:\n%s [commands] [options]\n", progname);
     printf("Commands:\n");
     printf("\t-types               Types of each instruction in post compiled riscv asm\n");
-    printf("\t-decode         		 Decode each instruction into its fields\n");
-    printf("\t-hazards         		 Print data hazards\n");
+    printf("\t-decode              Decode each instruction into its fields\n");
+    printf("\t-hazards             Print data hazards\n");
+    printf("\t-nops                Insert Nops in hex\n");
     printf("\nArgs:\n");
     printf("\t-file <filename>     <REQUIRED> Specify the input file\n"); 
     printf("\nOptions:\n");
     printf("\t--type=<type>        The format of the file passed [bin | hexstr | binstr] default: hexstr\n");
-    printf("\t--endian=little|big  The endianess of the file passed (when `bin` in type) default:little\n");
+    printf("\t--endian=little|big  The endianess of the file passed (when `bin` in type) default: little\n");
+    printf("\t--OF=1|0             Activate optimizing fowarding for insert Nops         default: 0\n");
 }
 
 int parse_endian(const char *value) {
@@ -33,6 +36,7 @@ int parse_endian(const char *value) {
 typedef struct {
     const char *filetype;
     int endian;
+		int optmize_fowarding;
 } ProgramOptions;
 
 typedef struct {
@@ -43,6 +47,7 @@ typedef struct {
     int run_types;
     int run_decode;
 		int run_hazards;
+		int run_nops;
 } CommandFlags;
 
 int main(int argc, char *argv[]) {
@@ -53,7 +58,8 @@ int main(int argc, char *argv[]) {
 
     ProgramOptions opts = {
         .filetype = "hexstr",
-        .endian = RSC_OBJ_LITTLE_ENDIAN
+        .endian = RSC_OBJ_LITTLE_ENDIAN,
+				.optmize_fowarding = 0
     };
 
 		ProgramArgs args = {
@@ -71,6 +77,8 @@ int main(int argc, char *argv[]) {
             cmds.run_decode = 1;
         } else if (ARG_IS("-hazards")) {
             cmds.run_hazards = 1;
+        } else if (ARG_IS("-nops")) {
+						cmds.run_nops = 1;
         } else if (ARG_IS("-file")) {
             args.filename = argv[++i];
         } else if (ARG_HAS_PREFIX("--endian=")) {
@@ -100,6 +108,10 @@ int main(int argc, char *argv[]) {
 
     if (cmds.run_hazards) {
 				handle_hazards(asmw);
+    }
+		
+    if (cmds.run_nops) {
+				handle_nops(asmw, opts.optmize_fowarding);
     }
 
     return 0;
