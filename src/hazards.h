@@ -4,9 +4,8 @@
 #include "opcode.h"
 
 typedef enum {
-	RAW,
-	WAW,
-	WAR
+	DATA,
+	CTRL,
 } hazard_type;
 
 typedef struct {
