@@ -23,7 +23,7 @@ void usage(const char *progname) {
     printf("\nOptions:\n");
     printf("\t--type=<type>        The format of the file passed [bin | hexstr | binstr] default: hexstr\n");
     printf("\t--endian=little|big  The endianess of the file passed (when `bin` in type) default: little\n");
-    printf("\t--OF=1|0             Activate optimizing fowarding for insert Nops         default: 0\n");
+    printf("\t-OF=1|0             Activate optimizing fowarding for insert Nops         default: 0\n");
 }
 
 int parse_endian(const char *value) {
@@ -85,6 +85,8 @@ int main(int argc, char *argv[]) {
             opts.endian = parse_endian(ARG_VALUE("--endian="));
         } else if (ARG_HAS_PREFIX("--type=")) {
             opts.filetype = ARG_VALUE("--type=");
+        } else if (ARG_HAS_PREFIX("-OF=")) {
+						opts.optmize_fowarding = atoi(ARG_VALUE("-OF="));
         } else {
             fprintf(stderr, "Unknown option: %s\n", arg);
             usage(argv[0]);
