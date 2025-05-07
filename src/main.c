@@ -5,7 +5,6 @@
 #include "typedefs.h"
 #include "words.h"
 #include "hazards.h"
-#include "nops.h"
 
 #define ARG_IS(s) (strcmp(arg, s) == 0)
 #define ARG_HAS_PREFIX(p) (strncmp(arg, p, strlen(p)) == 0)
