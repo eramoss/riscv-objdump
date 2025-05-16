@@ -111,7 +111,7 @@ int main(int argc, char *argv[]) {
     }
 
     if (cmds.run_hazards) {
-				handle_hazards(asmw);
+				handle_hazards(asmw,opts.optmize_fowarding);
     }
 		
     if (cmds.run_nops) {
@@ -119,10 +119,6 @@ int main(int argc, char *argv[]) {
     }
 	  
 		if (cmds.run_reorder) {
-				printf("PRE:\n");
-				handle_nops(asmw, opts.optmize_fowarding);
-				handle_decode(asmw);
-				printf("\n\n\n");
 				printf("POS:\n");
 				rscv_asm_words new_asm = reorder(asmw, opts.optmize_fowarding);
 				handle_nops(new_asm, opts.optmize_fowarding);
