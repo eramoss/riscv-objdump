@@ -81,7 +81,6 @@ typedef struct {
 
 
 #define HAS_FIELD(inst, field) has_field_##field(&(inst))
-
 static inline int has_field_rd(const instruction *inst) {
     return inst->type == REG_TYPE ||
            inst->type == IMM_TYPE ||
@@ -100,4 +99,43 @@ static inline int has_field_rs2(const instruction *inst) {
     return inst->type == REG_TYPE ||
            inst->type == STORE_TYPE ||
            inst->type == BRANCH_TYPE;
+}
+
+static inline unsigned int btype_imm(instruction i){
+	if (i.type == BRANCH_TYPE){
+		unsigned int imm = 0;
+		
+		imm |= (i.b.imm_1_4 & 0xF) << 1;
+		imm |= (i.b.imm_5_10 & 0x3F) << 5;
+		imm |= (i.b.imm_11 & 0x1) << 11;
+		imm |= (i.b.imm_12 & 0x1) << 12;
+
+    if (imm & (1 << 12)) {
+        imm |= 0xFFFFE000; 
+    }
+		return imm;
+	}
+	return 0;
+}
+
+static inline void update_btype_imm(instruction* i, unsigned int new_imm) {
+	if (i->type != BRANCH_TYPE) return;
+
+	unsigned int uimm = new_imm;
+
+	i->b.imm_1_4 = (uimm >> 1) & 0xF;
+	i->b.imm_5_10 = (uimm >> 5) & 0x3F;
+	i->b.imm_11 = (uimm >> 11) & 0x1;
+	i->b.imm_12 = (uimm >> 12) & 0x1;
+}
+
+static inline int is_dependent(instruction consumer, instruction producer){
+	if (!HAS_FIELD(producer, rd) || producer.r.rd == 0)
+		return 0; 
+
+	if (!(HAS_FIELD(consumer, rs1) && consumer.r.rs1 == producer.r.rd)
+		&& !(HAS_FIELD(consumer, rs2) && consumer.r.rs2 == producer.r.rd))
+		return 0;
+
+	return 1;
 }

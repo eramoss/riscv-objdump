@@ -115,14 +115,12 @@ int main(int argc, char *argv[]) {
     }
 		
     if (cmds.run_nops) {
-				handle_nops(asmw, opts.optmize_fowarding);
+				handle_nops(asmw, opts.optmize_fowarding, 1);
     }
 	  
 		if (cmds.run_reorder) {
-				printf("POS:\n");
 				rscv_asm_words new_asm = reorder(asmw, opts.optmize_fowarding);
-				handle_nops(new_asm, opts.optmize_fowarding);
-				handle_decode(new_asm);
+				handle_nops(new_asm, opts.optmize_fowarding, 0);
     }
 
 
